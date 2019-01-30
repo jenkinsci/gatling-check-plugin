@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
@@ -13,6 +16,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -28,11 +32,11 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public class GatlingChecker extends Recorder implements SimpleBuildStep {
 
-    private final boolean enabled;
+    private final List<AbstractMetric> metrics;
 
     @DataBoundConstructor
-    public GatlingChecker(boolean enabled) {
-        this.enabled = enabled;
+    public GatlingChecker(List<AbstractMetric> metrics) {
+        this.metrics = isEmpty(metrics) ? emptyList() : metrics;
     }
 
     @Override
@@ -44,8 +48,8 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
 
     ) throws InterruptedException, IOException {
 
-        if (!enabled) {
-            logError(taskListener, "plugin not enabled.");
+        if (isEmpty(metrics)) {
+            logError(taskListener, "no metric specified.");
             return;
         }
 
@@ -55,16 +59,19 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
             return;
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        for (FilePath statsFile : statsFiles) {
-            log(taskListener, "stats-file located: " + statsFile.getRemote());
-            GatlingReport gatlingReport  = objectMapper.readValue(
-                    new File(statsFile.getRemote()),
-                    new TypeReference<GatlingReport>() {
-
-                    }
-            );
-            log(taskListener, "QPS: " + gatlingReport.getStats().getNumberOfRequests().getOk());
+        for (AbstractMetric metric : metrics) {
+            switch (metric.getType()) {
+                case QPS:
+            }
+            for (FilePath statsFile : statsFiles) {
+                double qps = getQps(statsFile);
+                if (qps < Double.valueOf(((QpsMetric) metric).getQps())) {
+                    logError(taskListener, format(
+                            "qps metric unqualified, %f < %s", qps, ((QpsMetric) metric).getQps()
+                    ));
+                    run.setResult(Result.FAILURE);
+                }
+            }
         }
     }
 
@@ -79,6 +86,17 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
         }
+    }
+
+    private double getQps(FilePath statsFile) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        GatlingReport gatlingReport = objectMapper.readValue(
+                new File(statsFile.getRemote()),
+                new TypeReference<GatlingReport>() {
+
+                }
+        );
+        return gatlingReport.getStats().getNumberOfRequests().getOk();
     }
 
     private List<FilePath> getStatsFiles(
@@ -107,5 +125,41 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
 
     private void log(TaskListener taskListener, String s) {
         taskListener.getLogger().println(format("[Gatling Check Plugin]: %s", s));
+    }
+
+    public static abstract class AbstractMetric extends AbstractDescribableImpl<AbstractMetric> {
+        public abstract MetricType getType();
+    }
+
+    public static final class QpsMetric extends AbstractMetric {
+
+        private final String qps;
+
+        @Override
+        public MetricType getType() {
+            return MetricType.QPS;
+        }
+
+        @DataBoundConstructor
+        public QpsMetric(String qps) {
+            this.qps = qps;
+        }
+
+        @Extension
+        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
+            @Nonnull
+            @Override
+            public String getDisplayName() {
+                return "QPS 预警";
+            }
+        }
+
+        public String getQps() {
+            return qps;
+        }
+    }
+
+    public List<AbstractMetric> getMetrics() {
+        return metrics;
     }
 }

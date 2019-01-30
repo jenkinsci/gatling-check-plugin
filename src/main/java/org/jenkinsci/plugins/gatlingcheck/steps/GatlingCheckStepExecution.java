@@ -8,6 +8,8 @@ import org.jenkinsci.plugins.gatlingcheck.GatlingChecker;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
 import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 
+import static java.util.Collections.emptyList;
+
 public class GatlingCheckStepExecution
         extends AbstractSynchronousNonBlockingStepExecution<Void> {
 
@@ -27,7 +29,7 @@ public class GatlingCheckStepExecution
     protected Void run() throws Exception {
         listener.getLogger().println("Running Gatling check step.");
 
-        GatlingChecker gatlingChecker = new GatlingChecker(true);
+        GatlingChecker gatlingChecker = new GatlingChecker(emptyList());
         gatlingChecker.perform(build, ws, launcher, listener);
 
         return null;
