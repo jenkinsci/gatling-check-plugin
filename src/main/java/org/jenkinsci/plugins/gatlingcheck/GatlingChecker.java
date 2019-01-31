@@ -18,6 +18,10 @@ import hudson.tasks.Recorder;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
+import org.jenkinsci.plugins.gatlingcheck.metrics.AbstractMetric;
+import org.jenkinsci.plugins.gatlingcheck.metrics.QpsMetric;
+import org.jenkinsci.plugins.gatlingcheck.metrics.ResponseTime95Metric;
+import org.jenkinsci.plugins.gatlingcheck.metrics.ResponseTime99Metric;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -191,108 +195,6 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
 
     private void log(TaskListener taskListener, String s) {
         taskListener.getLogger().println(format("[Gatling Check Plugin]: %s", s));
-    }
-
-    public static abstract class AbstractMetric extends AbstractDescribableImpl<AbstractMetric> {
-        public abstract MetricType getType();
-    }
-
-    public static final class ResponseTime99Metric extends AbstractMetric {
-
-        private final String responseTime;
-
-        @DataBoundConstructor
-        public ResponseTime99Metric(String responseTime) {
-            this.responseTime = responseTime;
-        }
-
-        @Override
-        public MetricType getType() {
-            return MetricType.RESPONSE_TIME_99;
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
-
-            @Nonnull
-            @Override
-            public String getDisplayName() {
-                return ".99 响应时间预警";
-            }
-        }
-
-        public String getResponseTime() {
-            return responseTime;
-        }
-
-        public double getResponseTimeAsDouble() {
-            return Double.valueOf(responseTime);
-        }
-    }
-
-    public static final class ResponseTime95Metric extends AbstractMetric {
-
-        private final String responseTime;
-
-        @DataBoundConstructor
-        public ResponseTime95Metric(String responseTime) {
-            this.responseTime = responseTime;
-        }
-
-        @Override
-        public MetricType getType() {
-            return MetricType.RESPONSE_TIME_95;
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
-
-            @Nonnull
-            @Override
-            public String getDisplayName() {
-                return ".95 响应时间预警";
-            }
-        }
-
-        public String getResponseTime() {
-            return responseTime;
-        }
-
-        public double getResponseTimeAsDouble() {
-            return Double.valueOf(responseTime);
-        }
-    }
-
-    public static final class QpsMetric extends AbstractMetric {
-
-        private final String qps;
-
-        @Override
-        public MetricType getType() {
-            return MetricType.QPS;
-        }
-
-        @DataBoundConstructor
-        public QpsMetric(String qps) {
-            this.qps = qps;
-        }
-
-        @Extension
-        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
-            @Nonnull
-            @Override
-            public String getDisplayName() {
-                return "QPS 预警";
-            }
-        }
-
-        public String getQps() {
-            return qps;
-        }
-
-        public double getQpsAsDouble() {
-            return Double.valueOf(qps);
-        }
     }
 
     public List<AbstractMetric> getMetrics() {
