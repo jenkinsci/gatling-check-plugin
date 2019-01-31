@@ -62,15 +62,53 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         for (AbstractMetric metric : metrics) {
             switch (metric.getType()) {
                 case QPS:
-            }
-            for (FilePath statsFile : statsFiles) {
-                double qps = getQps(statsFile);
-                if (qps < Double.valueOf(((QpsMetric) metric).getQps())) {
-                    logError(taskListener, format(
-                            "qps metric unqualified, %f < %s", qps, ((QpsMetric) metric).getQps()
-                    ));
-                    run.setResult(Result.FAILURE);
-                }
+                    for (FilePath statsFile : statsFiles) {
+                        double qps = getQps(statsFile);
+                        if (qps < ((QpsMetric) metric).getQpsAsDouble()) {
+                            logError(taskListener, format(
+                                    "qps metric unqualified, %f < %s", qps, ((QpsMetric) metric).getQps()
+                            ));
+                            run.setResult(Result.FAILURE);
+
+                        } else {
+                            log(taskListener, "qps metric accepted: " + statsFile.getRemote());
+                        }
+                    }
+                    break;
+
+                case RESPONSE_TIME_99:
+                    for (FilePath statsFile : statsFiles) {
+                        double responseTime99 = getResponseTime99(statsFile);
+                        if (responseTime99 > ((ResponseTime99Metric) metric).getResponseTimeAsDouble()) {
+                            logError(taskListener, format(
+                                    ".99 response time unqualified, %f > %s",
+                                    responseTime99,
+                                    ((ResponseTime99Metric) metric).getResponseTime()
+                            ));
+                            run.setResult(Result.FAILURE);
+
+                        } else {
+                            log(taskListener, ".99 response time metric accepted: " + statsFile.getRemote());
+                        }
+                    }
+                    break;
+
+                case RESPONSE_TIME_95:
+                    for (FilePath statsFile : statsFiles) {
+                        double responseTime95 = getResponseTime95(statsFile);
+                        if (responseTime95 > ((ResponseTime95Metric) metric).getResponseTimeAsDouble()) {
+                            logError(taskListener, format(
+                                    ".95 response time unqualified, %f > %s",
+                                    responseTime95,
+                                    ((ResponseTime95Metric) metric).getResponseTime()
+                            ));
+                            run.setResult(Result.FAILURE);
+
+                        } else {
+                            log(taskListener, ".99 response time metric accepted: " + statsFile.getRemote());
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -86,6 +124,34 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         public boolean isApplicable(Class<? extends AbstractProject> aClass) {
             return true;
         }
+
+        @Nonnull
+        @Override
+        public String getDisplayName() {
+            return "Gatling Checker";
+        }
+    }
+
+    private double getResponseTime95(FilePath statsFile) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        GatlingReport gatlingReport = objectMapper.readValue(
+                new File(statsFile.getRemote()),
+                new TypeReference<GatlingReport>() {
+
+                }
+        );
+        return gatlingReport.getStats().getPercentiles3().getOk();
+    }
+
+    private double getResponseTime99(FilePath statsFile) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        GatlingReport gatlingReport = objectMapper.readValue(
+                new File(statsFile.getRemote()),
+                new TypeReference<GatlingReport>() {
+
+                }
+        );
+        return gatlingReport.getStats().getPercentiles4().getOk();
     }
 
     private double getQps(FilePath statsFile) throws IOException {
@@ -131,6 +197,72 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         public abstract MetricType getType();
     }
 
+    public static final class ResponseTime99Metric extends AbstractMetric {
+
+        private final String responseTime;
+
+        @DataBoundConstructor
+        public ResponseTime99Metric(String responseTime) {
+            this.responseTime = responseTime;
+        }
+
+        @Override
+        public MetricType getType() {
+            return MetricType.RESPONSE_TIME_99;
+        }
+
+        @Extension
+        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
+
+            @Nonnull
+            @Override
+            public String getDisplayName() {
+                return ".99 响应时间预警";
+            }
+        }
+
+        public String getResponseTime() {
+            return responseTime;
+        }
+
+        public double getResponseTimeAsDouble() {
+            return Double.valueOf(responseTime);
+        }
+    }
+
+    public static final class ResponseTime95Metric extends AbstractMetric {
+
+        private final String responseTime;
+
+        @DataBoundConstructor
+        public ResponseTime95Metric(String responseTime) {
+            this.responseTime = responseTime;
+        }
+
+        @Override
+        public MetricType getType() {
+            return MetricType.RESPONSE_TIME_95;
+        }
+
+        @Extension
+        public static class DescriptorImpl extends Descriptor<AbstractMetric> {
+
+            @Nonnull
+            @Override
+            public String getDisplayName() {
+                return ".95 响应时间预警";
+            }
+        }
+
+        public String getResponseTime() {
+            return responseTime;
+        }
+
+        public double getResponseTimeAsDouble() {
+            return Double.valueOf(responseTime);
+        }
+    }
+
     public static final class QpsMetric extends AbstractMetric {
 
         private final String qps;
@@ -156,6 +288,10 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
 
         public String getQps() {
             return qps;
+        }
+
+        public double getQpsAsDouble() {
+            return Double.valueOf(qps);
         }
     }
 

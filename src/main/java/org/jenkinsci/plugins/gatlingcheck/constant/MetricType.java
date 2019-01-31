@@ -10,7 +10,9 @@ import java.util.Optional;
  * @author xiaoyao
  */
 public enum MetricType {
-    QPS(1, "qps");
+    QPS(1, "qps"),
+    RESPONSE_TIME_99(2, "responseTime99"),
+    RESPONSE_TIME_95(3, "responseTime95");
 
     private int value;
 
