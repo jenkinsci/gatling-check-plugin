@@ -63,56 +63,17 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
             return;
         }
 
-        for (AbstractMetric metric : metrics) {
-            switch (metric.getType()) {
-                case QPS:
-                    for (FilePath statsFile : statsFiles) {
-                        double qps = getQps(statsFile);
-                        if (qps < ((QpsMetric) metric).getQpsAsDouble()) {
-                            logError(taskListener, format(
-                                    "qps metric unqualified, %f < %s", qps, ((QpsMetric) metric).getQps()
-                            ));
-                            run.setResult(Result.FAILURE);
+        for (FilePath statsFile : statsFiles) {
+            GatlingReport gatlingReport = getGatlingReport(statsFile);
+            log(taskListener, "Checking " + statsFile.getRemote());
+            for (AbstractMetric metric : metrics) {
+                if (metric.check(gatlingReport)) {
+                    log(taskListener, "metric accepted: " + metric);
 
-                        } else {
-                            log(taskListener, "qps metric accepted: " + statsFile.getRemote());
-                        }
-                    }
-                    break;
-
-                case RESPONSE_TIME_99:
-                    for (FilePath statsFile : statsFiles) {
-                        double responseTime99 = getResponseTime99(statsFile);
-                        if (responseTime99 > ((ResponseTime99Metric) metric).getResponseTimeAsDouble()) {
-                            logError(taskListener, format(
-                                    ".99 response time unqualified, %f > %s",
-                                    responseTime99,
-                                    ((ResponseTime99Metric) metric).getResponseTime()
-                            ));
-                            run.setResult(Result.FAILURE);
-
-                        } else {
-                            log(taskListener, ".99 response time metric accepted: " + statsFile.getRemote());
-                        }
-                    }
-                    break;
-
-                case RESPONSE_TIME_95:
-                    for (FilePath statsFile : statsFiles) {
-                        double responseTime95 = getResponseTime95(statsFile);
-                        if (responseTime95 > ((ResponseTime95Metric) metric).getResponseTimeAsDouble()) {
-                            logError(taskListener, format(
-                                    ".95 response time unqualified, %f > %s",
-                                    responseTime95,
-                                    ((ResponseTime95Metric) metric).getResponseTime()
-                            ));
-                            run.setResult(Result.FAILURE);
-
-                        } else {
-                            log(taskListener, ".99 response time metric accepted: " + statsFile.getRemote());
-                        }
-                    }
-                    break;
+                } else {
+                    logError(taskListener, "metric unqualified: " + metric);
+                    run.setResult(Result.FAILURE);
+                }
             }
         }
     }
@@ -136,37 +97,14 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         }
     }
 
-    private double getResponseTime95(FilePath statsFile) throws IOException {
+    private GatlingReport getGatlingReport(FilePath statsFile) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        GatlingReport gatlingReport = objectMapper.readValue(
+        return objectMapper.readValue(
                 new File(statsFile.getRemote()),
                 new TypeReference<GatlingReport>() {
 
                 }
         );
-        return gatlingReport.getStats().getPercentiles3().getOk();
-    }
-
-    private double getResponseTime99(FilePath statsFile) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GatlingReport gatlingReport = objectMapper.readValue(
-                new File(statsFile.getRemote()),
-                new TypeReference<GatlingReport>() {
-
-                }
-        );
-        return gatlingReport.getStats().getPercentiles4().getOk();
-    }
-
-    private double getQps(FilePath statsFile) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        GatlingReport gatlingReport = objectMapper.readValue(
-                new File(statsFile.getRemote()),
-                new TypeReference<GatlingReport>() {
-
-                }
-        );
-        return gatlingReport.getStats().getNumberOfRequests().getOk();
     }
 
     private List<FilePath> getStatsFiles(
