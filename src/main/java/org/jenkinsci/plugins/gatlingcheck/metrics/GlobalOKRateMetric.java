@@ -3,14 +3,17 @@ package org.jenkinsci.plugins.gatlingcheck.metrics;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.TaskListener;
+import hudson.util.FormValidation;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 import org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 
 import static java.lang.String.format;
+import static org.jenkinsci.plugins.gatlingcheck.util.FormValidationUtils.isValidRate;
 
 /**
  * @author xiaoyao
@@ -56,6 +59,10 @@ public class GlobalOKRateMetric extends AbstractMetric {
         @Override
         public String getDisplayName() {
             return "Global OK Rate Pre-warning";
+        }
+
+        public FormValidation doCheckRate(@QueryParameter String rate) {
+            return isValidRate(rate);
         }
     }
 

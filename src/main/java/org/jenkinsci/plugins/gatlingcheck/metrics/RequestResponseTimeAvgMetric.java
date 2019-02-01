@@ -3,14 +3,17 @@ package org.jenkinsci.plugins.gatlingcheck.metrics;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.TaskListener;
+import hudson.util.FormValidation;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static org.jenkinsci.plugins.gatlingcheck.util.FormValidationUtils.isPositiveNumber;
 import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getRequestReportByName;
 import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTimeAvg;
 
@@ -67,6 +70,10 @@ public class RequestResponseTimeAvgMetric extends AbstractMetric {
         @Override
         public String getDisplayName() {
             return "Request Average Response Time Pre-warning";
+        }
+
+        public FormValidation doCheckResponseTime(@QueryParameter String responseTime) {
+            return isPositiveNumber(responseTime);
         }
     }
 
