@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.gatlingcheck.metrics;
 
-
 import hudson.Extension;
 import hudson.model.Descriptor;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
@@ -9,28 +8,30 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 
-public final class ResponseTime99Metric extends AbstractMetric {
+import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTime95;
+
+public final class GlobalResponseTime95Metric extends AbstractMetric {
 
     private final String responseTime;
 
     @DataBoundConstructor
-    public ResponseTime99Metric(String responseTime) {
+    public GlobalResponseTime95Metric(String responseTime) {
         this.responseTime = responseTime;
     }
 
     @Override
     public MetricType getType() {
-        return MetricType.RESPONSE_TIME_99;
+        return MetricType.RESPONSE_TIME_95;
     }
 
     @Override
     public boolean check(GatlingReport gatlingReport) {
-        return gatlingReport.getResponseTime99() < Double.valueOf(responseTime);
+        return getResponseTime95(gatlingReport) < Double.valueOf(responseTime);
     }
 
     @Override
     public String toString() {
-        return ".99 response time < " + responseTime + " (ms)";
+        return "global .95 response time < " + responseTime + " (ms)";
     }
 
     @Extension
@@ -39,7 +40,7 @@ public final class ResponseTime99Metric extends AbstractMetric {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return ".99 响应时间预警";
+            return "Global .95 Response Time Pre-warning";
         }
     }
 

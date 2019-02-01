@@ -1,7 +1,7 @@
 package org.jenkinsci.plugins.gatlingcheck.data;
 
-import org.jenkinsci.plugins.gatlingcheck.data.metric.GatlingCountMetric;
-import org.jenkinsci.plugins.gatlingcheck.data.metric.GatlingPercentageMetric;
+import org.jenkinsci.plugins.gatlingcheck.data.stats.GatlingCountStat;
+import org.jenkinsci.plugins.gatlingcheck.data.stats.GatlingPercentageStat;
 
 /**
  * @author xiaoyao
@@ -10,33 +10,33 @@ public class GatlingReportStats {
 
     private String name;
 
-    private GatlingCountMetric numberOfRequests;
+    private GatlingCountStat numberOfRequests;
 
-    private GatlingCountMetric minResponseTime;
+    private GatlingCountStat minResponseTime;
 
-    private GatlingCountMetric maxResponseTime;
+    private GatlingCountStat maxResponseTime;
 
-    private GatlingCountMetric meanResponseTime;
+    private GatlingCountStat meanResponseTime;
 
-    private GatlingCountMetric standardDeviation;
+    private GatlingCountStat standardDeviation;
 
-    private GatlingCountMetric percentiles1;
+    private GatlingCountStat percentiles1;
 
-    private GatlingCountMetric percentiles2;
+    private GatlingCountStat percentiles2;
 
-    private GatlingCountMetric percentiles3;
+    private GatlingCountStat percentiles3;
 
-    private GatlingCountMetric percentiles4;
+    private GatlingCountStat percentiles4;
 
-    private GatlingPercentageMetric group1;
+    private GatlingPercentageStat group1;
 
-    private GatlingPercentageMetric group2;
+    private GatlingPercentageStat group2;
 
-    private GatlingPercentageMetric group3;
+    private GatlingPercentageStat group3;
 
-    private GatlingPercentageMetric group4;
+    private GatlingPercentageStat group4;
 
-    private GatlingCountMetric meanNumberOfRequestsPerSecond;
+    private GatlingCountStat meanNumberOfRequestsPerSecond;
 
     public String getName() {
         return name;
@@ -46,125 +46,115 @@ public class GatlingReportStats {
         this.name = name;
     }
 
-    public GatlingCountMetric getNumberOfRequests() {
+    public GatlingCountStat getNumberOfRequests() {
         return numberOfRequests;
     }
 
-    public void setNumberOfRequests(
-            GatlingCountMetric numberOfRequests) {
+    public void setNumberOfRequests(GatlingCountStat numberOfRequests) {
         this.numberOfRequests = numberOfRequests;
     }
 
-    public GatlingCountMetric getMinResponseTime() {
+    public GatlingCountStat getMinResponseTime() {
         return minResponseTime;
     }
 
-    public void setMinResponseTime(
-            GatlingCountMetric minResponseTime) {
+    public void setMinResponseTime(GatlingCountStat minResponseTime) {
         this.minResponseTime = minResponseTime;
     }
 
-    public GatlingCountMetric getMaxResponseTime() {
+    public GatlingCountStat getMaxResponseTime() {
         return maxResponseTime;
     }
 
-    public void setMaxResponseTime(
-            GatlingCountMetric maxResponseTime) {
+    public void setMaxResponseTime(GatlingCountStat maxResponseTime) {
         this.maxResponseTime = maxResponseTime;
     }
 
-    public GatlingCountMetric getMeanResponseTime() {
+    public GatlingCountStat getMeanResponseTime() {
         return meanResponseTime;
     }
 
-    public void setMeanResponseTime(
-            GatlingCountMetric meanResponseTime) {
+    public void setMeanResponseTime(GatlingCountStat meanResponseTime) {
         this.meanResponseTime = meanResponseTime;
     }
 
-    public GatlingCountMetric getStandardDeviation() {
+    public GatlingCountStat getStandardDeviation() {
         return standardDeviation;
     }
 
-    public void setStandardDeviation(
-            GatlingCountMetric standardDeviation) {
+    public void setStandardDeviation(GatlingCountStat standardDeviation) {
         this.standardDeviation = standardDeviation;
     }
 
-    public GatlingCountMetric getPercentiles1() {
+    public GatlingCountStat getPercentiles1() {
         return percentiles1;
     }
 
-    public void setPercentiles1(
-            GatlingCountMetric percentiles1) {
+    public void setPercentiles1(GatlingCountStat percentiles1) {
         this.percentiles1 = percentiles1;
     }
 
-    public GatlingCountMetric getPercentiles2() {
+    public GatlingCountStat getPercentiles2() {
         return percentiles2;
     }
 
-    public void setPercentiles2(
-            GatlingCountMetric percentiles2) {
+    public void setPercentiles2(GatlingCountStat percentiles2) {
         this.percentiles2 = percentiles2;
     }
 
-    public GatlingCountMetric getPercentiles3() {
+    public GatlingCountStat getPercentiles3() {
         return percentiles3;
     }
 
-    public void setPercentiles3(
-            GatlingCountMetric percentiles3) {
+    public void setPercentiles3(GatlingCountStat percentiles3) {
         this.percentiles3 = percentiles3;
     }
 
-    public GatlingCountMetric getPercentiles4() {
+    public GatlingCountStat getPercentiles4() {
         return percentiles4;
     }
 
-    public void setPercentiles4(
-            GatlingCountMetric percentiles4) {
+    public void setPercentiles4(GatlingCountStat percentiles4) {
         this.percentiles4 = percentiles4;
     }
 
-    public GatlingPercentageMetric getGroup1() {
+    public GatlingPercentageStat getGroup1() {
         return group1;
     }
 
-    public void setGroup1(GatlingPercentageMetric group1) {
+    public void setGroup1(GatlingPercentageStat group1) {
         this.group1 = group1;
     }
 
-    public GatlingPercentageMetric getGroup2() {
+    public GatlingPercentageStat getGroup2() {
         return group2;
     }
 
-    public void setGroup2(GatlingPercentageMetric group2) {
+    public void setGroup2(GatlingPercentageStat group2) {
         this.group2 = group2;
     }
 
-    public GatlingPercentageMetric getGroup3() {
+    public GatlingPercentageStat getGroup3() {
         return group3;
     }
 
-    public void setGroup3(GatlingPercentageMetric group3) {
+    public void setGroup3(GatlingPercentageStat group3) {
         this.group3 = group3;
     }
 
-    public GatlingPercentageMetric getGroup4() {
+    public GatlingPercentageStat getGroup4() {
         return group4;
     }
 
-    public void setGroup4(GatlingPercentageMetric group4) {
+    public void setGroup4(GatlingPercentageStat group4) {
         this.group4 = group4;
     }
 
-    public GatlingCountMetric getMeanNumberOfRequestsPerSecond() {
+    public GatlingCountStat getMeanNumberOfRequestsPerSecond() {
         return meanNumberOfRequestsPerSecond;
     }
 
-    public void setMeanNumberOfRequestsPerSecond(
-            GatlingCountMetric meanNumberOfRequestsPerSecond) {
+    public void setMeanNumberOfRequestsPerSecond(GatlingCountStat meanNumberOfRequestsPerSecond) {
         this.meanNumberOfRequestsPerSecond = meanNumberOfRequestsPerSecond;
     }
 }

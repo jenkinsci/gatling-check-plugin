@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractDescribableImpl;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -16,12 +14,8 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import jenkins.tasks.SimpleBuildStep;
-import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 import org.jenkinsci.plugins.gatlingcheck.metrics.AbstractMetric;
-import org.jenkinsci.plugins.gatlingcheck.metrics.QpsMetric;
-import org.jenkinsci.plugins.gatlingcheck.metrics.ResponseTime95Metric;
-import org.jenkinsci.plugins.gatlingcheck.metrics.ResponseTime99Metric;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -64,10 +58,10 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
         }
 
         for (FilePath statsFile : statsFiles) {
-            GatlingReport gatlingReport = getGatlingReport(statsFile);
+            GatlingReport gatlingGlobalReport = getGatlingReport(statsFile);
             log(taskListener, "Checking " + statsFile.getRemote());
             for (AbstractMetric metric : metrics) {
-                if (metric.check(gatlingReport)) {
+                if (metric.check(gatlingGlobalReport)) {
                     log(taskListener, "metric accepted: " + metric);
 
                 } else {

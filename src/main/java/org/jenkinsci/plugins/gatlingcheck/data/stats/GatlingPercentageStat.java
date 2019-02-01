@@ -1,9 +1,9 @@
-package org.jenkinsci.plugins.gatlingcheck.data.metric;
+package org.jenkinsci.plugins.gatlingcheck.data.stats;
 
 /**
  * @author xiaoyao
  */
-public class GatlingPercentageMetric {
+public class GatlingPercentageStat {
 
     private String name;
 

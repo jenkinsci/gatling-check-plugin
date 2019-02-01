@@ -4,11 +4,12 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
+import org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 
-public final class QpsMetric extends AbstractMetric {
+public final class GlobalQpsMetric extends AbstractMetric {
 
     private final String qps;
 
@@ -19,17 +20,17 @@ public final class QpsMetric extends AbstractMetric {
 
     @Override
     public boolean check(GatlingReport gatlingReport) {
-        return gatlingReport.getQps() > Double.valueOf(qps);
+        return GatlingReportUtils.getQps(gatlingReport) > Double.valueOf(qps);
     }
 
     @DataBoundConstructor
-    public QpsMetric(String qps) {
+    public GlobalQpsMetric(String qps) {
         this.qps = qps;
     }
 
     @Override
     public String toString() {
-        return "qps > " + qps;
+        return "global qps > " + qps;
     }
 
     @Extension
@@ -37,7 +38,7 @@ public final class QpsMetric extends AbstractMetric {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "QPS 预警";
+            return "Global QPS Pre-warning";
         }
     }
 

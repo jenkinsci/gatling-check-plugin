@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-    <f:section title="Metrics">
+    <f:section title="Gatling Check Metrics">
         <f:block>
             <f:repeatableHeteroProperty field="metrics" hasHeader="true"/>
         </f:block>

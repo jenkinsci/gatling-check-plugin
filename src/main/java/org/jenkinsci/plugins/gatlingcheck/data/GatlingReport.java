@@ -17,18 +17,14 @@ public class GatlingReport {
 
     private GatlingReportStats stats;
 
-    private Map<String, GatlingReportContent> contents;
+    private Map<String, GatlingReport> contents;
 
-    public double getQps() {
-        return stats.getMeanNumberOfRequestsPerSecond().getOk();
+    public Map<String, GatlingReport> getContents() {
+        return contents;
     }
 
-    public double getResponseTime99() {
-        return stats.getPercentiles4().getOk();
-    }
-
-    public double getResponseTime95() {
-        return stats.getPercentiles3().getOk();
+    public void setContents(Map<String, GatlingReport> contents) {
+        this.contents = contents;
     }
 
     public String getType() {
@@ -69,13 +65,5 @@ public class GatlingReport {
 
     public void setStats(GatlingReportStats stats) {
         this.stats = stats;
-    }
-
-    public Map<String, GatlingReportContent> getContents() {
-        return contents;
-    }
-
-    public void setContents(Map<String, GatlingReportContent> contents) {
-        this.contents = contents;
     }
 }
