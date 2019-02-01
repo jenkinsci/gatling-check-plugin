@@ -1,6 +1,5 @@
 package org.jenkinsci.plugins.gatlingcheck.metrics;
 
-
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.TaskListener;
@@ -12,20 +11,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static java.lang.String.format;
-import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTime99;
+import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTimeAvg;
 
-public final class GlobalResponseTime99Metric extends AbstractMetric {
+/**
+ * @author xiaoyao
+ */
+public class GlobalResponseTimeAvgMetric extends AbstractMetric {
 
     private final String responseTime;
 
     @DataBoundConstructor
-    public GlobalResponseTime99Metric(String responseTime) {
+    public GlobalResponseTimeAvgMetric(String responseTime) {
         this.responseTime = responseTime;
     }
 
     @Override
     public MetricType getType() {
-        return MetricType.GLOBAL_RESPONSE_TIME_99;
+        return MetricType.GLOBAL_RESPONSE_TIME_AVG;
     }
 
     @Override
@@ -33,17 +35,17 @@ public final class GlobalResponseTime99Metric extends AbstractMetric {
             @Nullable TaskListener taskListener, @Nonnull GatlingReport gatlingReport
     ) {
         double expected = Double.valueOf(responseTime);
-        double actual = getResponseTime99(gatlingReport);
+        double actual = getResponseTimeAvg(gatlingReport);
         if (actual > expected) {
             logError(taskListener, format(
-                    "global .99 response time metric unqualified, expected = %f, actual = %f",
+                    "global avg response time metric unqualified, expected = %f, actual = %f",
                     expected, actual
             ));
             return false;
 
         } else {
             log(taskListener, format(
-                    "global .99 response time metric accepted, expected = %f, actual = %f",
+                    "global avg response time metric accepted, expected = %f, actual = %f",
                     expected, actual
             ));
             return true;
@@ -56,7 +58,7 @@ public final class GlobalResponseTime99Metric extends AbstractMetric {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Global .99 Response Time Pre-warning";
+            return "Global Average Response Time Pre-warning";
         }
     }
 

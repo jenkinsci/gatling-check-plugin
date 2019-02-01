@@ -21,6 +21,10 @@ public final class GatlingReportStatsUtils {
         return gatlingReportStats.getPercentiles3().getOk();
     }
 
+    public static double getResponseTimeAvg(@Nonnull GatlingReportStats gatlingReportStats) {
+        return gatlingReportStats.getMeanResponseTime().getOk();
+    }
+
     private GatlingReportStatsUtils() {
         throw new UnsupportedOperationException();
     }

@@ -28,6 +28,10 @@ public final class GatlingReportUtils {
         return GatlingReportStatsUtils.getResponseTime95(gatlingReport.getStats());
     }
 
+    public static double getResponseTimeAvg(@Nonnull GatlingReport gatlingReport) {
+        return GatlingReportStatsUtils.getResponseTimeAvg(gatlingReport.getStats());
+    }
+
     public static boolean isRequestReport(@Nonnull GatlingReport gatlingReport) {
         return "REQUEST".equals(gatlingReport.getType());
     }

@@ -5,7 +5,6 @@ import hudson.model.Descriptor;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
-import org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -13,6 +12,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getRequestReportByName;
+import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTime95;
 
 /**
  * @author xiaoyao
@@ -43,7 +43,7 @@ public class RequestResponseTime95Metric extends AbstractMetric {
         }
 
         double expected = Double.valueOf(responseTime);
-        double actual = GatlingReportUtils.getResponseTime95(requestReport.get());
+        double actual = getResponseTime95(requestReport.get());
         if (actual > expected) {
             logError(taskListener, format(
                     "request %s .95 response time metric unqualified, expected = %f, actual = %f",
