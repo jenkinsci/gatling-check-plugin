@@ -19,7 +19,10 @@ public enum MetricType {
     REQUEST_RESPONSE_TIME_95(6, "requestResponseTime95"),
 
     GLOBAL_RESPONSE_TIME_AVG(7, "globalResponseTimeAvg"),
-    REQUEST_RESPONSE_TIME_AVG(8, "requestResponseTimeAvg");
+    REQUEST_RESPONSE_TIME_AVG(8, "requestResponseTimeAvg"),
+
+    GLOBAL_OK_RATE(9, "globalOKRate"),
+    REQUEST_OK_RATE(10, "requestOKRate");
 
     private int value;
 

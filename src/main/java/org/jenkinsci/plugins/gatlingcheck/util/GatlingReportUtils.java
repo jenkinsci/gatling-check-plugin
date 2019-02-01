@@ -16,6 +16,10 @@ import static org.apache.commons.collections.MapUtils.isEmpty;
  */
 public final class GatlingReportUtils {
 
+    public static double getOKRate(@Nonnull GatlingReport gatlingReport) {
+        return GatlingReportStatsUtils.getOKRate(gatlingReport.getStats());
+    }
+
     public static double getQps(@Nonnull GatlingReport gatlingReport) {
         return GatlingReportStatsUtils.getQps(gatlingReport.getStats());
     }

@@ -9,6 +9,12 @@ import javax.annotation.Nonnull;
  */
 public final class GatlingReportStatsUtils {
 
+    public static double getOKRate(@Nonnull GatlingReportStats gatlingReportStats) {
+        double ok = gatlingReportStats.getNumberOfRequests().getOk();
+        double total = gatlingReportStats.getNumberOfRequests().getTotal();
+        return ok * 100 / total;
+    }
+
     public static double getQps(@Nonnull GatlingReportStats gatlingReportStats) {
         return gatlingReportStats.getMeanNumberOfRequestsPerSecond().getOk();
     }
