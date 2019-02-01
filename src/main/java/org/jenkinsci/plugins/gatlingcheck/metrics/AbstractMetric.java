@@ -17,8 +17,6 @@ public abstract class AbstractMetric extends AbstractDescribableImpl<AbstractMet
             @Nonnull TaskListener taskListener, @Nonnull GatlingReport gatlingReport
     );
 
-    public abstract String toString();
-
     protected void log(TaskListener taskListener, String s) {
         taskListener.getLogger().println(format("[Gatling Check Plugin] %s", s));
     }

@@ -48,11 +48,6 @@ public final class GlobalResponseTime95Metric extends AbstractMetric {
         }
     }
 
-    @Override
-    public String toString() {
-        return "global .95 response time < " + responseTime + " (ms)";
-    }
-
     @Extension
     public static class DescriptorImpl extends Descriptor<AbstractMetric> {
 

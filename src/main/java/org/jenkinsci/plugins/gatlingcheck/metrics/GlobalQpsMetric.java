@@ -46,11 +46,6 @@ public final class GlobalQpsMetric extends AbstractMetric {
         this.qps = qps;
     }
 
-    @Override
-    public String toString() {
-        return "global qps > " + qps;
-    }
-
     @Extension
     public static class DescriptorImpl extends Descriptor<AbstractMetric> {
         @Nonnull

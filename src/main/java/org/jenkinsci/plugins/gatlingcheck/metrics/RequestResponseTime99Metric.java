@@ -17,21 +17,21 @@ import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getRequ
 /**
  * @author xiaoyao
  */
-public class RequestQpsMetric extends AbstractMetric {
-
+public class RequestResponseTime99Metric extends AbstractMetric{
+    
     private final String requestName;
 
-    private final String qps;
+    private final String responseTime;
 
     @DataBoundConstructor
-    public RequestQpsMetric(String requestName, String qps) {
+    public RequestResponseTime99Metric(String requestName, String responseTime) {
         this.requestName = requestName;
-        this.qps = qps;
+        this.responseTime = responseTime;
     }
 
     @Override
     public MetricType getType() {
-        return MetricType.REQUEST_QPS;
+        return MetricType.REQUEST_RESPONSE_TIME_99;
     }
 
     @Override
@@ -42,23 +42,24 @@ public class RequestQpsMetric extends AbstractMetric {
             return false;
         }
 
-        double expected = Double.valueOf(qps);
-        double actual = GatlingReportUtils.getQps(requestReport.get());
-        if (actual < expected) {
+        double expected = Double.valueOf(responseTime);
+        double actual = GatlingReportUtils.getResponseTime99(requestReport.get());
+        if (actual > expected) {
             logError(taskListener, format(
-                    "request %s qps metric unqualified, expected = %f, actual = %f",
+                    "request %s .99 response time metric unqualified, expected = %f, actual = %f",
                     requestName, expected, actual
             ));
             return false;
 
         } else {
             log(taskListener, format(
-                    "request %s qps metric accepted, expected = %f, actual = %f",
+                    "request %s .99 response time metric accepted, expected = %f, actual = %f",
                     requestName, expected, actual
             ));
             return true;
         }
     }
+
 
     @Extension
     public static class DescriptorImpl extends Descriptor<AbstractMetric> {
@@ -66,7 +67,7 @@ public class RequestQpsMetric extends AbstractMetric {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Request QPS Pre-warning";
+            return "Request .99 Response Time Pre-warning";
         }
     }
 
@@ -74,7 +75,7 @@ public class RequestQpsMetric extends AbstractMetric {
         return requestName;
     }
 
-    public String getQps() {
-        return qps;
+    public String getResponseTime() {
+        return responseTime;
     }
 }
