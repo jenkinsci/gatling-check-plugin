@@ -2,6 +2,7 @@ package org.jenkinsci.plugins.gatlingcheck.metrics;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.TaskListener;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 import org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils;
@@ -9,18 +10,35 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 
+import static java.lang.String.format;
+
 public final class GlobalQpsMetric extends AbstractMetric {
 
     private final String qps;
 
     @Override
     public MetricType getType() {
-        return MetricType.QPS;
+        return MetricType.GLOBAL_QPS;
     }
 
     @Override
-    public boolean check(GatlingReport gatlingReport) {
-        return GatlingReportUtils.getQps(gatlingReport) > Double.valueOf(qps);
+    public boolean check(@Nonnull TaskListener taskListener, @Nonnull GatlingReport gatlingReport) {
+        double expected = Double.valueOf(qps);
+        double actual = GatlingReportUtils.getQps(gatlingReport);
+        if (actual < expected) {
+            logError(taskListener, format(
+                    "global qps metric unqualified, expected = %f, actual = %f",
+                    expected, actual
+            ));
+            return false;
+
+        } else {
+            log(taskListener, format(
+                    "global qps metric accepted, expected = %f, actual = %f",
+                    expected, actual
+            ));
+            return true;
+        }
     }
 
     @DataBoundConstructor

@@ -61,11 +61,7 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
             GatlingReport gatlingGlobalReport = getGatlingReport(statsFile);
             log(taskListener, "Checking " + statsFile.getRemote());
             for (AbstractMetric metric : metrics) {
-                if (metric.check(gatlingGlobalReport)) {
-                    log(taskListener, "metric accepted: " + metric);
-
-                } else {
-                    logError(taskListener, "metric unqualified: " + metric);
+                if (!metric.check(taskListener, gatlingGlobalReport)) {
                     run.setResult(Result.FAILURE);
                 }
             }

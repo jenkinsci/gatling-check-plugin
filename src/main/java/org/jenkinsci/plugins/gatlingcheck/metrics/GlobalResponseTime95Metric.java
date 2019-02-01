@@ -2,13 +2,15 @@ package org.jenkinsci.plugins.gatlingcheck.metrics;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.TaskListener;
 import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
+import org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
 
-import static org.jenkinsci.plugins.gatlingcheck.util.GatlingReportUtils.getResponseTime95;
+import static java.lang.String.format;
 
 public final class GlobalResponseTime95Metric extends AbstractMetric {
 
@@ -21,12 +23,29 @@ public final class GlobalResponseTime95Metric extends AbstractMetric {
 
     @Override
     public MetricType getType() {
-        return MetricType.RESPONSE_TIME_95;
+        return MetricType.GLOBAL_RESPONSE_TIME_95;
     }
 
     @Override
-    public boolean check(GatlingReport gatlingReport) {
-        return getResponseTime95(gatlingReport) < Double.valueOf(responseTime);
+    public boolean check(
+            @Nonnull TaskListener taskListener, @Nonnull GatlingReport gatlingReport
+    ) {
+        double expected = Double.valueOf(responseTime);
+        double actual = GatlingReportUtils.getResponseTime95(gatlingReport);
+        if (actual > expected) {
+            logError(taskListener, format(
+                    "global .95 response time metric unqualified, expected = %f, actual = %f",
+                    expected, actual
+            ));
+            return false;
+
+        } else {
+            log(taskListener, format(
+                    "global .95 response time metric accepted, expected = %f, actual = %f",
+                    expected, actual
+            ));
+            return true;
+        }
     }
 
     @Override

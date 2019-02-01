@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.MapUtils.isEmpty;
 
@@ -43,12 +42,14 @@ public final class GatlingReportUtils {
                 .collect(toList());
     }
 
-    public Optional<GatlingReport> getRequestReportByName(
+    public static Optional<GatlingReport> getRequestReportByName(
             @Nonnull GatlingReport gatlingReport, @Nonnull String name
     ) {
         return isEmpty(gatlingReport.getContents())
                 ? empty()
-                : ofNullable(gatlingReport.getContents().get(name));
+                : gatlingReport.getContents().values().stream()
+                .filter(content -> name.equals(content.getName()))
+                .findFirst();
     }
 
     private GatlingReportUtils() {
