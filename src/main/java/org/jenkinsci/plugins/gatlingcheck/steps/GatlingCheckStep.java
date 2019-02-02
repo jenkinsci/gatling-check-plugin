@@ -74,9 +74,9 @@ public class GatlingCheckStep extends Step {
         if (isBlank(metric)) {
             return null;
         }
-        replace(metric, " ", "");
+        String trimmedMetric = replace(metric, " ", "");
 
-        String[] pair1 = split(metric, "=");
+        String[] pair1 = split(trimmedMetric, "=");
         if (pair1.length != 2) {
             return null;
         }

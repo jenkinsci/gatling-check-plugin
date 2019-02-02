@@ -43,7 +43,7 @@ public class GatlingCheckStepTest {
                 "node {\n",
                 "    sleep 1\n",
                 "    writeFile file: 'results/p-1234/js/stats.json', text: '" + stats + "'\n",
-                "    gatlingCheck(metrics: ['global.qps=100'])\n",
+                "    gatlingCheck(metrics: ['global.qps=100', 'global.okRate = 90'])\n",
                 "}\n"
         )));
 

@@ -32,8 +32,6 @@ public class GatlingCheckStepExecution extends AbstractSynchronousNonBlockingSte
         Run build = getContext().get(Run.class);
         Launcher launcher = getContext().get(Launcher.class);
 
-        listener.getLogger().println("----------------------------------------------------------");
-
         GatlingChecker gatlingChecker = new GatlingChecker(metrics);
         gatlingChecker.perform(build, ws, launcher, listener);
 
