@@ -118,11 +118,11 @@ public class GatlingChecker extends Recorder implements SimpleBuildStep {
     }
 
     private void logError(TaskListener taskListener, String s) {
-        taskListener.error("[Gatling Check Plugin]: %s", s);
+        taskListener.error("[Gatling Check Plugin] %s", s);
     }
 
     private void log(TaskListener taskListener, String s) {
-        taskListener.getLogger().println(format("[Gatling Check Plugin]: %s", s));
+        taskListener.getLogger().println(format("[Gatling Check Plugin] %s", s));
     }
 
     public List<AbstractMetric> getMetrics() {

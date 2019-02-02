@@ -4,7 +4,7 @@ A Jenkins plugin that checks Gatling reports against performance metrics.
 ## Purpose
 We want to automate the performing of Gatling load-tests to ensure performance guarantees.
 Jenkins is the right tool for scheduling the load-tests, but we still have to check results manually.
-This plugin checks gatling reports after simulation executions, and turn build-status to FAILURE if the some performance metrics not met.
+This plugin checks gatling reports after simulation executions, and turn build-status to FAILURE if some performance metric not met.
 
 ## Usage
 * This plugin can be used either in Jenkins Web UI or Pipeline (as code). 
