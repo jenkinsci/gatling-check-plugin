@@ -6,10 +6,15 @@ import org.jenkinsci.plugins.gatlingcheck.constant.MetricType;
 import org.jenkinsci.plugins.gatlingcheck.data.GatlingReport;
 
 import javax.annotation.Nonnull;
+import java.io.Serializable;
 
 import static java.lang.String.format;
 
-public abstract class AbstractMetric extends AbstractDescribableImpl<AbstractMetric> {
+public abstract class AbstractMetric
+        extends AbstractDescribableImpl<AbstractMetric>
+        implements Serializable {
+
+    protected static final long serialVersionUID = 1L;
 
     public abstract MetricType getType();
 

@@ -5,33 +5,42 @@ import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import org.jenkinsci.plugins.gatlingcheck.GatlingChecker;
+import org.jenkinsci.plugins.gatlingcheck.metrics.AbstractMetric;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
-import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
 
-import static java.util.Collections.emptyList;
+import java.util.List;
 
-public class GatlingCheckStepExecution
-        extends AbstractSynchronousNonBlockingStepExecution<Void> {
+/**
+ * @author xiaoyao
+ */
+public class GatlingCheckStepExecution extends AbstractSynchronousNonBlockingStepExecution<Void> {
 
-    @StepContextParameter
-    private transient TaskListener listener;
+    private static final long serialVersionUID = 1L;
 
-    @StepContextParameter
-    private transient FilePath ws;
+    private final List<AbstractMetric> metrics;
 
-    @StepContextParameter
-    private transient Run build;
-
-    @StepContextParameter
-    private transient Launcher launcher;
+    public GatlingCheckStepExecution(StepContext context, List<AbstractMetric> metrics) {
+        super(context);
+        this.metrics = metrics;
+    }
 
     @Override
     protected Void run() throws Exception {
-        listener.getLogger().println("Running Gatling check step.");
+        TaskListener listener = getContext().get(TaskListener.class);
+        FilePath ws = getContext().get(FilePath.class);
+        Run build = getContext().get(Run.class);
+        Launcher launcher = getContext().get(Launcher.class);
 
-        GatlingChecker gatlingChecker = new GatlingChecker(emptyList());
+        listener.getLogger().println("----------------------------------------------------------");
+
+        GatlingChecker gatlingChecker = new GatlingChecker(metrics);
         gatlingChecker.perform(build, ws, launcher, listener);
 
         return null;
+    }
+
+    public List<AbstractMetric> getMetrics() {
+        return metrics;
     }
 }
