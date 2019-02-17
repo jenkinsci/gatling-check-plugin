@@ -9,7 +9,7 @@
     <relativePath />
   </parent>
   <artifactId>gatling-check</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <properties>
@@ -39,7 +39,7 @@
     <connection>scm:git:git://github.com/jenkinsci/gatling-check-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/gatling-check-plugin.git</developerConnection>
     <url>http://github.com/jenkinsci/gatling-check-plugin</url>
-    <tag>gatling-check-1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
